@@ -15,3 +15,7 @@ To do list:
 - [ ] Add light switch or sth like this.
 
 Bolded items are priority.
+
+[3D reference] (http://threejs.org)
+
+New models will come soon, for now leave those.

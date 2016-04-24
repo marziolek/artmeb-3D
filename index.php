@@ -107,11 +107,10 @@
 
 			var clock = new THREE.Clock();
 
-//raycasting for selection init
-			var mouseVector  = new THREE.Vector3();
-			var projector = new THREE.Projector();
-			var raycastered;
-
+	//raycasting for selection init
+			var mouseVector  = new THREE.Vector3(),
+					projector = new THREE.Projector(),
+					raycastered,pickedObject;
 
 			init();
 			animate();
@@ -296,7 +295,24 @@
 				raycastered.setFromCamera(mouseVector.clone(),camera);
 				var intersects = raycastered.intersectObjects(scene.children,true);
 
-				if(intersects.length > 0){
+					if(intersects.length > 0){
+					if(pickedObject == null){
+						pickedObject = intersects[0].object;
+						console.log(pickedObject.name, "null");
+					} else {
+						if(pickedObject.name != intersects[0].object.name){
+							console.log('diff');
+							console.log(pickedObject.name, "dif");
+
+							pickedObject = intersects[0].object;
+						} else {
+							console.log('same');
+							console.log(pickedObject.name , "same");
+							pickedObject = null;
+						}
+					}
+
+
 					if(!scaled){
 						intersects[0].object.scale.set(1.2,1.2,1.2);
 						scaled = true;
@@ -305,7 +321,6 @@
 						scaled = false;
 					}
 
-				}
 			}
 
 

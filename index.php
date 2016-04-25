@@ -91,8 +91,9 @@
 		<script src="build/three.min.js"></script>
 		<script src="js/loaders/OBJLoader.js"></script>
 		<script src="build/Projector.js"></script>
-		<script src="js/controls/TrackballControls.js"></script>
+
 		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+		<script src="js/controls/OrbitControls.js"></script>
 		<script>
 
 			var container;
@@ -107,36 +108,41 @@
 
 			var clock = new THREE.Clock();
 
-	//raycasting for selection init
+			//raycasting for selection init
 			var mouseVector  = new THREE.Vector3(),
 					projector = new THREE.Projector(),
 					raycastered,pickedObject;
 
+
 			init();
 			animate();
 
+			//INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT INIT
+
 			function init() {
 
-				raycastered = new THREE.Raycaster();
+
+				renderer = new THREE.WebGLRenderer( { alpha: true } );
+				renderer.setClearColor( 0xFFFFFF, 1 );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
+				container.appendChild( renderer.domElement );
+
+
+
+				raycastered = new THREE.Raycaster();
+
+/* / controls */
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.z = 250;
+				camera.position.y = 50;
+				controls = new THREE.OrbitControls( camera ,renderer.domElement);
+				controls.target.set( 0, 10, 0 );
 
-				controls = new THREE.TrackballControls( camera );
-				controls.target.set( 0, 0, 0 );
 
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = false;
-				controls.dynamicDampingFactor = 0.15;
-				/* / controls */
 
 				// scene
 
@@ -145,13 +151,12 @@
 				var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
 				scene.add( light );
 
-				// texture
+
+				//LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER
 
 				var manager = new THREE.LoadingManager();
 				manager.onProgress = function ( item, loaded, total ) {
-
 					console.log( item, loaded, total );
-
 				};
 
 				var texture = new THREE.Texture();
@@ -165,6 +170,8 @@
 
 				var onError = function ( xhr ) {
 				};
+
+				//LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE LOAD TEXTURE
 
 				var material;
 				var loader = new THREE.ImageLoader( manager );
@@ -180,11 +187,11 @@
 
 				changeMaterials(manager, loader, texture);
 
-				// model
+				//LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL
 
 				var loader = new THREE.OBJLoader( manager );
-				//loader.load( 'obj/couch/armchair.obj', function ( object ) {
-				loader.load( 'obj/sofa_test_v2.obj', function ( object ) {
+
+				loader.load( 'obj/complexSofa/sofaComplete.obj', function ( object ) {
 					object.traverse( function ( child ) {
 
 						if ( child instanceof THREE.Mesh ) {
@@ -193,40 +200,23 @@
 
 					} );
 
-					object.position.y = 0;
-					scene.add( object );
-
-				}, onProgress, onError );
-
-				loader.load( 'obj/couch/armchair.obj', function ( object ) {
-					object.traverse( function ( child ) {
-
-						if ( child instanceof THREE.Mesh ) {
-							child.material.map = texture;
-						}
-
-					} );
-
-					object.position.y = 0;
+					object.position.y = -10;
 					scene.add( object );
 
 				}, onProgress, onError );
 
 				//
 
-				renderer = new THREE.WebGLRenderer( { alpha: true } );
-				renderer.setClearColor( 0xFFFFFF, 1 );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				container.appendChild( renderer.domElement );
 
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
-//selecting object on click listener
+				//selecting object on click listener
 				document.addEventListener('mousedown', onMouseDown,false);
 			}
 
+
+			//ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE
 			function onWindowResize() {
 
 				windowHalfX = window.innerWidth / 2;
@@ -238,56 +228,56 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
-			/*
-			function onDocumentMouseMove( event ) {
 
-				mouseX = ( event.clientX - windowHalfX ) / 2;
-				mouseY = ( event.clientY - windowHalfY ) / 2;
-
-			}*/
-
-			//
-
+			//ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 			function animate() {
-
+				controls.update();
 				requestAnimationFrame( animate );
 				render();
-
 			}
 
+			//RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER
 			function render() {
 
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+//				camera.position.x += ( mouseX - camera.position.x ) * .05;
+//				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+//				camera.lookAt( scene.position );
 
-				camera.lookAt( scene.position );
-
-				controls.update( clock.getDelta() );
+				//		controls.update( clock.getDelta() );
 
 				renderer.render( scene, camera );
 			}
 
+
+			//MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER
+
 			function changeMaterials(manager, loader, texture) {
 				$('.materials button').click( function() {
 					loader.load( $(this).data('image'), function ( image ) {
+						//						texture.image = image;
+						//						console.log(image,"tex");
+						//						texture.needsUpdate = true;
+						//						texture.wrapS = THREE.RepeatWrapping;
+						//						texture.wrapT = THREE.RepeatWrapping;
+						//						if ($(this).data('size') === "600x600") {
+						//							console.log(600);
+						//							texture.repeat.set( 3, 3 );
+						//						} else {
+						//							texture.repeat.set( 4, 4 );
+						//						}
 
-						texture.image = image;
-						texture.needsUpdate = true;
-						texture.wrapS = THREE.RepeatWrapping;
-						texture.wrapT = THREE.RepeatWrapping;
-						if ($(this).data('size') === "600x600") {
-							console.log(600);
-							texture.repeat.set( 3, 3 );
-						} else {
-							texture.repeat.set( 4, 4 );
+						if(pickedObject){
+							pickedObject.material.map.image = image;
 						}
 
+						console.log(pickedObject ,"is object");
 					} );
 				});
 			}
 
-//select object on click
+			//SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK
 			var scaled = false;
+
 			function onMouseDown(event){
 				event.preventDefault();
 				mouseVector.x = 2* (event.clientX / window.innerWidth) - 1;
@@ -295,19 +285,20 @@
 				raycastered.setFromCamera(mouseVector.clone(),camera);
 				var intersects = raycastered.intersectObjects(scene.children,true);
 
-					if(intersects.length > 0){
+
+				if(intersects.length > 0){
 					if(pickedObject == null){
 						pickedObject = intersects[0].object;
 						console.log(pickedObject.name, "null");
 					} else {
 						if(pickedObject.name != intersects[0].object.name){
 							console.log('diff');
-							console.log(pickedObject.name, "dif");
+							console.log(pickedObject, "dif");
 
 							pickedObject = intersects[0].object;
 						} else {
 							console.log('same');
-							console.log(pickedObject.name , "same");
+							console.log(pickedObject , "same");
 							pickedObject = null;
 						}
 					}
@@ -320,7 +311,7 @@
 						intersects[0].object.scale.set(1,1,1);
 						scaled = false;
 					}
-
+				}
 			}
 
 

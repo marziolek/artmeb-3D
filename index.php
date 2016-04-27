@@ -134,12 +134,13 @@
 
 				raycastered = new THREE.Raycaster();
 
-/* / controls */
+				/* / controls */
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.z = 250;
 				camera.position.y = 50;
 				controls = new THREE.OrbitControls( camera ,renderer.domElement);
+				controls.enablePan = false;
 				controls.target.set( 0, 10, 0 );
 
 
@@ -239,11 +240,6 @@
 			//RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER
 			function render() {
 
-//				camera.position.x += ( mouseX - camera.position.x ) * .05;
-//				camera.position.y += ( - mouseY - camera.position.y ) * .05;
-//				camera.lookAt( scene.position );
-
-				//		controls.update( clock.getDelta() );
 
 				renderer.render( scene, camera );
 			}
@@ -251,27 +247,28 @@
 
 			//MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER MATERIAL SWITCHER
 
-			function changeMaterials(manager, loader, texture) {
+			function changeMaterials() {
+				var loader = new THREE.TextureLoader(),
+						newMaterial;
+
 				$('.materials button').click( function() {
-					loader.load( $(this).data('image'), function ( image ) {
-						//						texture.image = image;
-						//						console.log(image,"tex");
-						//						texture.needsUpdate = true;
-						//						texture.wrapS = THREE.RepeatWrapping;
-						//						texture.wrapT = THREE.RepeatWrapping;
-						//						if ($(this).data('size') === "600x600") {
-						//							console.log(600);
-						//							texture.repeat.set( 3, 3 );
-						//						} else {
-						//							texture.repeat.set( 4, 4 );
-						//						}
+					loader.load($(this).data('image'), function(texture){
+						texture.wrapS = THREE.RepeatWrapping;
+						texture.wrapT = THREE.RepeatWrapping;
 
-						if(pickedObject){
-							pickedObject.material.map.image = image;
-						}
+						texture.repeat.set( 3, 3 );
 
+						newMaterial = new THREE.MeshPhongMaterial({map: texture});
+						console.log(newMaterial);
 						console.log(pickedObject ,"is object");
-					} );
+						pickedObject.material = newMaterial;
+					});
+
+
+
+
+					console.log(newMaterial ,"is  new material");
+					//		} );
 				});
 			}
 

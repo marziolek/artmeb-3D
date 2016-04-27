@@ -198,10 +198,11 @@
 						if ( child instanceof THREE.Mesh ) {
 							child.material.map = texture;
 						}
-
+console.log(object, 'loader object');
 					} );
 
 					object.position.y = -10;
+					object.name = "sofa";
 					scene.add( object );
 
 				}, onProgress, onError );
@@ -239,8 +240,6 @@
 
 			//RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER
 			function render() {
-
-
 				renderer.render( scene, camera );
 			}
 
@@ -259,16 +258,10 @@
 						texture.repeat.set( 15, 15 );
 
 						newMaterial = new THREE.MeshPhongMaterial({map: texture});
-						console.log(newMaterial);
-						console.log(pickedObject ,"is object");
 						pickedObject.material = newMaterial;
+						pickedObject.scale.set(1,1,1);
+						pickedObject = null;
 					});
-
-
-
-
-					console.log(newMaterial ,"is  new material");
-					//		} );
 				});
 			}
 
@@ -277,6 +270,7 @@
 
 			function onMouseDown(event){
 				event.preventDefault();
+				console.log(scene.children);
 				mouseVector.x = 2* (event.clientX / window.innerWidth) - 1;
 				mouseVector.y = 1 - 2 *(event.clientY / window.innerHeight);
 				raycastered.setFromCamera(mouseVector.clone(),camera);
@@ -284,30 +278,15 @@
 
 
 				if(intersects.length > 0){
-					if(pickedObject == null){
-						pickedObject = intersects[0].object;
-						console.log(pickedObject.name, "null");
-					} else {
-						if(pickedObject.name != intersects[0].object.name){
-							console.log('diff');
-							console.log(pickedObject, "dif");
-
-							pickedObject = intersects[0].object;
-						} else {
-							console.log('same');
-							console.log(pickedObject , "same");
-							pickedObject = null;
-						}
-					}
-
-
 					if(!scaled){
 						intersects[0].object.scale.set(1.2,1.2,1.2);
 						scaled = true;
+						pickedObject = intersects[0].object;
 					} else {
 						intersects[0].object.scale.set(1,1,1);
 						scaled = false;
-					}
+						pickedObject = null;
+					}															
 				}
 			}
 

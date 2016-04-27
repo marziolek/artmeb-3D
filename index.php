@@ -278,7 +278,7 @@ console.log(object, 'loader object');
 
 
 				if(intersects.length > 0){
-					if(!scaled){
+					if(!scaled || pickedObject == undefined){
 						intersects[0].object.scale.set(1.2,1.2,1.2);
 						scaled = true;
 						pickedObject = intersects[0].object;

@@ -182,7 +182,7 @@
 					texture.needsUpdate = true;
 					texture.wrapS = THREE.RepeatWrapping;
 					texture.wrapT = THREE.RepeatWrapping;
-					texture.repeat.set( 3, 3 );
+					texture.repeat.set( 15, 15 );
 
 				} );
 
@@ -256,7 +256,7 @@
 						texture.wrapS = THREE.RepeatWrapping;
 						texture.wrapT = THREE.RepeatWrapping;
 
-						texture.repeat.set( 3, 3 );
+						texture.repeat.set( 15, 15 );
 
 						newMaterial = new THREE.MeshPhongMaterial({map: texture});
 						console.log(newMaterial);

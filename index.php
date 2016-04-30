@@ -49,6 +49,7 @@
 	<body>
 		<div id="info">
 			<p>Testowy model fotela i nakładanie tkanin</p>
+			<label for="input-full-object">full object</label><input id="input-full-object" type="checkbox"/>
 		</div>
 
 		<ul class="materials">
@@ -198,7 +199,7 @@
 						if ( child instanceof THREE.Mesh ) {
 							child.material.map = texture;
 						}
-console.log(object, 'loader object');
+						console.log(object, 'loader object');
 					} );
 
 					object.position.y = -10;
@@ -250,7 +251,10 @@ console.log(object, 'loader object');
 				var loader = new THREE.TextureLoader(),
 						newMaterial;
 
+
 				$('.materials button').click( function() {
+					var isFullObject = document.getElementById('input-full-object').checked;
+
 					loader.load($(this).data('image'), function(texture){
 						texture.wrapS = THREE.RepeatWrapping;
 						texture.wrapT = THREE.RepeatWrapping;
@@ -258,9 +262,28 @@ console.log(object, 'loader object');
 						texture.repeat.set( 15, 15 );
 
 						newMaterial = new THREE.MeshPhongMaterial({map: texture});
-						pickedObject.material = newMaterial;
-						pickedObject.scale.set(1,1,1);
-						pickedObject = null;
+
+
+						if(isFullObject){
+							console.log(isFullObject, 'full objj wantedd');
+							console.log(scene.children, 'full objj wantedd');
+							for(var i=0; i<scene.children.length;i++){
+								var child = scene.children[i];
+								if(child.type == "Group"){
+									for(var j=0;child.children.length;i++){
+										child.children[i].material = newMaterial;
+									}
+								}
+							}
+
+						} else {
+							if(pickedObject != undefined){
+								pickedObject.material = newMaterial;
+								pickedObject.scale.set(1,1,1);
+								pickedObject = null;
+							}
+						}
+
 					});
 				});
 			}
@@ -286,7 +309,7 @@ console.log(object, 'loader object');
 						intersects[0].object.scale.set(1,1,1);
 						scaled = false;
 						pickedObject = null;
-					}															
+					}
 				}
 			}
 

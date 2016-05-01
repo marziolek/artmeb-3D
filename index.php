@@ -43,6 +43,10 @@
 				background-repeat: no-repeat;
 				background-position: center;
 			}
+
+			div{
+				margin-right:130px;
+			}
 		</style>
 	</head>
 
@@ -54,22 +58,22 @@
 
 		<ul class="materials">
 			<li class="active">
-				<button type="button" style="background-image: url(textures/nowe/1.jpg)" data-image="textures/nowe/1.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/1.jpg)" data-heightMap="textures/nowe/1-heightMap.jpg" data-image="textures/nowe/1.jpg"></button>
 			</li>
 			<li>
-				<button type="button" style="background-image: url(textures/nowe/2.jpg)" data-image="textures/nowe/2.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/2.jpg)" data-heightMap="textures/nowe/2-heightMap.jpg" data-image="textures/nowe/2.jpg"></button>
 			</li>
 			<li>
-				<button type="button" style="background-image: url(textures/nowe/3.jpg)" data-image="textures/nowe/3.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/3.jpg)" data-heightMap="textures/nowe/3-heightMap.jpg" data-image="textures/nowe/3.jpg"></button>
 			</li>
 			<li>
-				<button type="button" style="background-image: url(textures/nowe/4.jpg)" data-image="textures/nowe/4.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/4.jpg)" data-heightMap="textures/nowe/4-heightMap.jpg" data-image="textures/nowe/4.jpg"></button>
 			</li>
 			<li>
-				<button type="button" style="background-image: url(textures/nowe/5.jpg)" data-image="textures/nowe/5.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/5.jpg)" data-heightMap="textures/nowe/5-heightMap.jpg" data-image="textures/nowe/5.jpg"></button>
 			</li>
 			<li>
-				<button type="button" style="background-image: url(textures/nowe/6.jpg)" data-image="textures/nowe/6.jpg"></button>
+				<button type="button" style="background-image: url(textures/nowe/6.jpg)" data-heightMap="textures/nowe/6-heightMap.jpg" data-image="textures/nowe/6.jpg"></button>
 			</li>
 
 			<!-- pik -->
@@ -151,6 +155,9 @@
 				scene = new THREE.Scene();
 
 				var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+				var spotLight = new THREE.DirectionalLight( 0xffffff, 0.2 );
+				spotLight.position.set(0,1,0);
+				scene.add( spotLight );
 				scene.add( light );
 
 
@@ -199,7 +206,6 @@
 						if ( child instanceof THREE.Mesh ) {
 							child.material.map = texture;
 						}
-						console.log(object, 'loader object');
 					} );
 
 					object.position.y = -10;
@@ -251,27 +257,40 @@
 				var loader = new THREE.TextureLoader(),
 						newMaterial;
 
-
 				$('.materials button').click( function() {
-					var isFullObject = document.getElementById('input-full-object').checked;
+					var isFullObject = document.getElementById('input-full-object').checked,
+							hasBumpMap = $(this).data('heightmap') != undefined ? true : false;
+
+					if(hasBumpMap){
+						var heightMap = loader.load($(this).data('heightmap'));
+						heightMap.wrapS = heightMap.wrapT = THREE.RepeatWrapping;
+					}
+
 
 					loader.load($(this).data('image'), function(texture){
 						texture.wrapS = THREE.RepeatWrapping;
 						texture.wrapT = THREE.RepeatWrapping;
 
 						texture.repeat.set( 15, 15 );
-
-						newMaterial = new THREE.MeshPhongMaterial({map: texture});
+						if(hasBumpMap){
+							newMaterial = new THREE.MeshPhongMaterial({
+							map: texture,
+							bumpMap: heightMap,
+							bumpScale: 0.5
+						});
+						} else {
+							newMaterial = new THREE.MeshPhongMaterial({
+							map: texture
+						});
+						}
 
 
 						if(isFullObject){
-							console.log(isFullObject, 'full objj wantedd');
-							console.log(scene.children, 'full objj wantedd');
 							for(var i=0; i<scene.children.length;i++){
 								var child = scene.children[i];
 								if(child.type == "Group"){
-									for(var j=0;child.children.length;i++){
-										child.children[i].material = newMaterial;
+									for(var j=0;child.children.length;j++){
+										child.children[j].material = newMaterial;
 									}
 								}
 							}
@@ -293,7 +312,6 @@
 
 			function onMouseDown(event){
 				event.preventDefault();
-				console.log(scene.children);
 				mouseVector.x = 2* (event.clientX / window.innerWidth) - 1;
 				mouseVector.y = 1 - 2 *(event.clientY / window.innerHeight);
 				raycastered.setFromCamera(mouseVector.clone(),camera);

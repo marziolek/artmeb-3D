@@ -32,6 +32,7 @@
 				padding: 0;
 				margin: 0;
 				overflow-y: auto;
+				z-index:999;
 			}
 			.materials li {
 				margin-bottom: 10px;
@@ -47,6 +48,12 @@
 			div{
 				margin-right:130px;
 			}
+
+/*
+			div > canvas {
+				max-width:98%;
+			}
+*/
 		</style>
 	</head>
 
@@ -176,7 +183,7 @@
 				scene.add( spotLightFill );
 				var spotLightEdge = new THREE.SpotLight( 0xA4BDCC );
 				spotLightEdge.castShadow = true;
-				spotLightEdge.intensity = 0.6;
+				spotLightEdge.intensity = 0.8;
 				spotLightEdge.shadow.mapSize.width = 2048;
 				spotLightEdge.shadow.mapSize.height = 2048;
 				spotLightEdge.shadow.camera.near = 500;
@@ -275,7 +282,7 @@
 				floorMaterial = new THREE.MeshPhongMaterial({
 					map: floorTexture,
 					bumpMap: floorHeightMap,
-					bumpMapScale:0.1,
+					bumpScale:0.5,
 					shininess: 0.1
 				});
 				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
@@ -348,7 +355,7 @@
 							newMaterial = new THREE.MeshPhongMaterial({
 								map: texture,
 								bumpMap: heightMap,
-								bumpMapScale: 0.05,
+								bumpScale: 0.2,
 								shininess: 5
 							});
 						} else {

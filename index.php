@@ -131,6 +131,8 @@
 				renderer.setClearColor( 0xFFFFFF, 1 );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
@@ -148,17 +150,61 @@
 				controls.enablePan = false;
 				controls.target.set( 0, 10, 0 );
 
-
-
 				// scene
-
 				scene = new THREE.Scene();
 
 				var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
-				var spotLight = new THREE.DirectionalLight( 0xffffff, 0.2 );
-				spotLight.position.set(0,1,0);
+				var spotLight = new THREE.SpotLight( 0xFFFEBC );
+				spotLight.castShadow = true;
+				spotLight.shadow.mapSize.width = 2048;
+				spotLight.shadow.mapSize.height = 2048;
+				spotLight.intensity = 1;
+				spotLight.shadow.camera.near = 650;
+				spotLight.shadow.camera.far = 1000;
+				spotLight.shadow.camera.fov = 30;
+				spotLight.position.set(-500,500,500);
 				scene.add( spotLight );
-				scene.add( light );
+				var spotLightFill = new THREE.SpotLight( 0xFBE4FF );
+				spotLightFill.castShadow = true;
+				spotLightFill.intensity = 0.7;
+				spotLightFill.shadow.mapSize.width = 2048;
+				spotLightFill.shadow.mapSize.height = 2048;
+				spotLightFill.shadow.camera.near = 650;
+				spotLightFill.shadow.camera.far = 1000;
+				spotLightFill.shadow.camera.fov = 30;
+				spotLightFill.position.set(300,500,600);
+				scene.add( spotLightFill );
+				var spotLightEdge = new THREE.SpotLight( 0xA4BDCC );
+				spotLightEdge.castShadow = true;
+				spotLightEdge.intensity = 0.6;
+				spotLightEdge.shadow.mapSize.width = 2048;
+				spotLightEdge.shadow.mapSize.height = 2048;
+				spotLightEdge.shadow.camera.near = 500;
+				spotLightEdge.shadow.camera.far = 700;
+				spotLightEdge.shadow.camera.fov = 40;
+				spotLightEdge.position.set(-200,100,-300);
+				scene.add( spotLightEdge );
+				//scene.add( light );
+
+
+	//camera helper
+
+//	var cameraHelper = new THREE.CameraHelper(camera);
+//	var shadowCameraHelper = new THREE.CameraHelper(spotLightFill.shadow.camera);
+	//var shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+//	var shadowCameraHelper = new THREE.CameraHelper(spotLightEdge.shadow.camera);
+//	scene.add(cameraHelper);
+	//scene.add(shadowCameraHelper);
+
+//spotlight helper
+
+//	var spotLightHelper = new THREE.SpotLightHelper(spotLightFill, 50); // 50 is sphere size
+
+//	scene.add(spotLightHelper);
+
+
+
+
 
 
 				//LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER LOAD MANAGER
@@ -209,12 +255,38 @@
 					} );
 
 					object.position.y = -10;
+					object.castShadow = true;
+					object.receiveShadow = true;
 					object.name = "sofa";
 					scene.add( object );
 
 				}, onProgress, onError );
 
-				//
+				//ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR
+
+				var floor,floorMaterial,floorTexture,floorHeightMap;
+				floorTexture = new THREE.TextureLoader().load('textures/woodPlanks.jpg');
+				floorHeightMap = new THREE.TextureLoader().load('textures/woodPlanks-bumpMap.jpg');
+				floorTexture.wrapS = THREE.RepeatWrapping;
+				floorTexture.wrapT = THREE.RepeatWrapping;
+				floorHeightMap.wrapS = floorHeightMap.wrapT = THREE.RepeatWrapping;
+				floorHeightMap.repeat.set(4,4);
+				floorTexture.repeat.set(4,4);
+				floorMaterial = new THREE.MeshPhongMaterial({
+					map: floorTexture,
+					bumpMap: floorHeightMap,
+					bumpMapScale:0.1,
+					shininess: 0.1
+				});
+				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
+				floor.receiveShadow = true;
+				floor.castShadow = true;
+				floor.material.side = THREE.DoubleSide;
+				floor.position.x = -20;
+				floor.position.y = -10;
+				floor.rotation.x = Math.PI/2;
+				floor.name = 'floor';
+				scene.add(floor);
 
 
 
@@ -274,14 +346,15 @@
 						texture.repeat.set( 15, 15 );
 						if(hasBumpMap){
 							newMaterial = new THREE.MeshPhongMaterial({
-							map: texture,
-							bumpMap: heightMap,
-							bumpScale: 0.5
-						});
+								map: texture,
+								bumpMap: heightMap,
+								bumpMapScale: 0.05,
+								shininess: 5
+							});
 						} else {
 							newMaterial = new THREE.MeshPhongMaterial({
-							map: texture
-						});
+								map: texture
+							});
 						}
 
 
@@ -318,7 +391,7 @@
 				var intersects = raycastered.intersectObjects(scene.children,true);
 
 
-				if(intersects.length > 0){
+				if(intersects.length > 0 && intersects[0].object.name != 'floor'){
 					if(!scaled || pickedObject == undefined){
 						intersects[0].object.scale.set(1.2,1.2,1.2);
 						scaled = true;

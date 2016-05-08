@@ -49,11 +49,11 @@
 				margin-right:130px;
 			}
 
-/*
+			/*
 			div > canvas {
-				max-width:98%;
+			max-width:98%;
 			}
-*/
+			*/
 		</style>
 	</head>
 
@@ -61,6 +61,7 @@
 		<div id="info">
 			<p>Testowy model fotela i nakładanie tkanin</p>
 			<label for="input-full-object">full object</label><input id="input-full-object" type="checkbox"/>
+			<button class="js-zoom-in">+</button><button class="js-zoom-out">-</button>
 		</div>
 
 		<ul class="materials">
@@ -155,7 +156,32 @@
 				camera.position.y = 50;
 				controls = new THREE.OrbitControls( camera ,renderer.domElement);
 				controls.enablePan = false;
+				controls.enableZoom = false;
 				controls.target.set( 0, 10, 0 );
+
+				//camera click zoom in/out
+				var zoomInBtn = document.querySelector('.js-zoom-in'),
+						zoomOutBtn = document.querySelector('.js-zoom-out');
+
+				function zoomCamera(moveDistance){
+					var YAXIS = new THREE.Vector3(0, 1, 0);
+					var ZAXIS = new THREE.Vector3(0, 0, 1);
+					var direction = ZAXIS.clone();
+					direction.applyQuaternion(camera.quaternion);
+					direction.sub(YAXIS.clone().multiplyScalar(direction.dot(YAXIS)));
+					direction.normalize();
+					camera.quaternion.setFromUnitVectors(ZAXIS, direction);
+					camera.translateZ(-moveDistance);
+
+				}
+
+				zoomInBtn.addEventListener('click',function(){
+					zoomCamera(5);
+				},false);
+
+				zoomOutBtn.addEventListener('click',function(){
+					zoomCamera(-5);
+				},false);
 
 				// scene
 				scene = new THREE.Scene();
@@ -194,20 +220,20 @@
 				//scene.add( light );
 
 
-	//camera helper
+				//camera helper
 
-//	var cameraHelper = new THREE.CameraHelper(camera);
-//	var shadowCameraHelper = new THREE.CameraHelper(spotLightFill.shadow.camera);
-	//var shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-//	var shadowCameraHelper = new THREE.CameraHelper(spotLightEdge.shadow.camera);
-//	scene.add(cameraHelper);
-	//scene.add(shadowCameraHelper);
+				//	var cameraHelper = new THREE.CameraHelper(camera);
+				//	var shadowCameraHelper = new THREE.CameraHelper(spotLightFill.shadow.camera);
+				//var shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+				//	var shadowCameraHelper = new THREE.CameraHelper(spotLightEdge.shadow.camera);
+				//	scene.add(cameraHelper);
+				//scene.add(shadowCameraHelper);
 
-//spotlight helper
+				//spotlight helper
 
-//	var spotLightHelper = new THREE.SpotLightHelper(spotLightFill, 50); // 50 is sphere size
+				//	var spotLightHelper = new THREE.SpotLightHelper(spotLightFill, 50); // 50 is sphere size
 
-//	scene.add(spotLightHelper);
+				//	scene.add(spotLightHelper);
 
 
 
@@ -266,7 +292,6 @@
 					object.receiveShadow = true;
 					object.name = "sofa";
 					scene.add( object );
-
 				}, onProgress, onError );
 
 				//ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR
@@ -287,13 +312,13 @@
 				});
 				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
 				floor.receiveShadow = true;
-				floor.castShadow = true;
 				floor.material.side = THREE.DoubleSide;
 				floor.position.x = -20;
 				floor.position.y = -10;
 				floor.rotation.x = Math.PI/2;
 				floor.name = 'floor';
 				scene.add(floor);
+				console.log(floor);
 
 
 
@@ -410,6 +435,11 @@
 					}
 				}
 			}
+
+
+
+
+
 
 
 			window.requestAnimationFrame(render);

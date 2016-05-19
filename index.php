@@ -5,6 +5,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
+            html, body, #model3d {
+              height: 100%;
+            }
+          
 			body {
 				font-family: Monospace;
 				background-color: #000;
@@ -45,15 +49,14 @@
 				background-position: center;
 			}
 
-			div{
+			div {
 				margin-right:130px;
 			}
-
-			/*
-			div > canvas {
-			max-width:98%;
-			}
-			*/
+          
+          /* shows that new onMouseDown works */
+          canvas {
+            height: 90% !important;
+          }
 		</style>
 	</head>
 
@@ -100,6 +103,8 @@
 				<button type="button" style="background-image: url(textures/Artmeb/plecionka/Gabon_769_600x600.jpg)" data-image="textures/Artmeb/plecionka/Gabon_769_600x600.jpg" data-size="600x600">600x600</button>
 			</li>
 		</ul>
+      
+        <div id="model3d" height="400px"></div>
 
 		<script src="build/three.min.js"></script>
 		<script src="js/loaders/OBJLoader.js"></script>
@@ -115,17 +120,17 @@
 
 			var mouseX = 0, mouseY = 0;
 
-			var windowHalfX = window.innerWidth / 2;
-			var windowHalfY = window.innerHeight / 2;
-
-
+          var canvasH = $('#model3d').height(),
+              canvasW = $('#model3d').width(),
+              windowHalfX = canvasW / 2,
+              windowHalfY = canvasH / 2;
+		
 			var clock = new THREE.Clock();
 
 			//raycasting for selection init
 			var mouseVector  = new THREE.Vector3(),
 					projector = new THREE.Projector(),
 					raycastered,pickedObject;
-
 
 			init();
 			animate();
@@ -138,11 +143,10 @@
 				renderer = new THREE.WebGLRenderer( { alpha: true } );
 				renderer.setClearColor( 0xFFFFFF, 1 );
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( canvasW, canvasH );
 				renderer.shadowMap.enabled = true;
 				renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
+				container = document.getElementById('model3d');
 				container.appendChild( renderer.domElement );
 
 
@@ -151,7 +155,7 @@
 
 				/* / controls */
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera = new THREE.PerspectiveCamera( 45, canvasW / canvasH, 1, 2000 );
 				camera.position.z = 250;
 				camera.position.y = 50;
 				controls = new THREE.OrbitControls( camera ,renderer.domElement);
@@ -279,7 +283,7 @@
 
 				var loader = new THREE.OBJLoader( manager );
 
-				loader.load( 'obj/complexSofa/sofaComplete.obj', function ( object ) {
+				loader.load( 'obj/sofa2os.obj', function ( object ) {
 					object.traverse( function ( child ) {
 
 						if ( child instanceof THREE.Mesh ) {
@@ -290,7 +294,7 @@
 					object.position.y = -10;
 					object.castShadow = true;
 					object.receiveShadow = true;
-					object.name = "sofa";
+					object.name = "sofa2os";
 					scene.add( object );
 				}, onProgress, onError );
 
@@ -332,13 +336,13 @@
 			//ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE ON RESIZE
 			function onWindowResize() {
 
-				windowHalfX = window.innerWidth / 2;
-				windowHalfY = window.innerHeight / 2;
+				windowHalfX = canvasW / 2;
+				windowHalfY = canvasH / 2;
 
-				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.aspect = canvasW / canvasH;
 				camera.updateProjectionMatrix();
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( canvasW, canvasH );
 
 			}
 
@@ -415,32 +419,32 @@
 			//SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK SELECT ON CLICK
 			var scaled = false;
 
-			function onMouseDown(event){
-				event.preventDefault();
-				mouseVector.x = 2* (event.clientX / window.innerWidth) - 1;
-				mouseVector.y = 1 - 2 *(event.clientY / window.innerHeight);
-				raycastered.setFromCamera(mouseVector.clone(),camera);
-				var intersects = raycastered.intersectObjects(scene.children,true);
+			var windowW = $(window).width(),
+                windowH = $(window).height();
 
+            function onMouseDown(event){
+              event.preventDefault();
 
-				if(intersects.length > 0 && intersects[0].object.name != 'floor'){
-					if(!scaled || pickedObject == undefined){
-						intersects[0].object.scale.set(1.2,1.2,1.2);
-						scaled = true;
-						pickedObject = intersects[0].object;
-					} else {
-						intersects[0].object.scale.set(1,1,1);
-						scaled = false;
-						pickedObject = null;
-					}
-				}
-			}
+              //mouseVector.x = 2* (event.clientX / windowW) - 1;
+              //mouseVector.y = 1 - 2 *(event.clientY / windowH);
+              mouseVector.x = ( (event.clientX - $(renderer.domElement).offset().left) / renderer.domElement.clientWidth ) * 2 - 1;
+              mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
 
+              raycastered.setFromCamera(mouseVector.clone(),camera);
+              var intersects = raycastered.intersectObjects(scene.children,true);
 
-
-
-
-
+              if(intersects.length > 0 && intersects[0].object.name != 'floor'){
+                if(!scaled || pickedObject == undefined){
+                  intersects[0].object.scale.set(1.2,1.2,1.2);
+                  scaled = true;
+                  pickedObject = intersects[0].object;
+                } else {
+                  intersects[0].object.scale.set(1,1,1);
+                  scaled = false;
+                  pickedObject = null;
+                }
+              }
+            }
 
 			window.requestAnimationFrame(render);
 		</script>

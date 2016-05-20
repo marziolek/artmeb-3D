@@ -140,7 +140,7 @@
 			function init() {
 
 
-				renderer = new THREE.WebGLRenderer( { alpha: true } );
+				renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
 				renderer.setClearColor( 0xFFFFFF, 1 );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( canvasW, canvasH );

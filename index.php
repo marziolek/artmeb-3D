@@ -283,6 +283,12 @@
 					color: 0x8f8f8f
 				});
 
+				var legsMaterial = new THREE.MeshPhongMaterial({
+					shininess: 90,
+					color: 0x4f4f4f,
+					specular: 0xdedede
+				});
+
 				changeMaterials(manager, loader, texture);
 
 				//LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL LOAD MODEL
@@ -291,8 +297,10 @@
 
 				loader.load( 'obj/sofa2os.obj', function ( object ) {
 					object.traverse( function ( child ) {
-						if ( child instanceof THREE.Mesh ) {
+						if ( child instanceof THREE.Mesh && child.name.split("_")[1] != "nogi" ) {
 							child.material = defaultMaterial;
+						} else {
+							child.material = legsMaterial;
 						}
 					} );
 
@@ -327,7 +335,6 @@
 				floor.rotation.x = Math.PI/2;
 				floor.name = 'floor';
 				scene.add(floor);
-				console.log(floor);
 
 
 

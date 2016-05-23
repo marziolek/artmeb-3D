@@ -5,10 +5,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
-            html, body, #model3d {
-              height: 100%;
-            }
-          
+						html, body, #model3d {
+							height: 100%;
+						}
+
 			body {
 				font-family: Monospace;
 				background-color: #000;
@@ -52,11 +52,11 @@
 			div {
 				margin-right:130px;
 			}
-          
-          /* shows that new onMouseDown works */
-          canvas {
-            height: 90% !important;
-          }
+
+					/* shows that new onMouseDown works */
+					canvas {
+						height: 90% !important;
+					}
 		</style>
 	</head>
 
@@ -103,8 +103,8 @@
 				<button type="button" style="background-image: url(textures/Artmeb/plecionka/Gabon_769_600x600.jpg)" data-image="textures/Artmeb/plecionka/Gabon_769_600x600.jpg" data-size="600x600">600x600</button>
 			</li>
 		</ul>
-      
-        <div id="model3d" height="400px"></div>
+
+				<div id="model3d" height="400px"></div>
 
 		<script src="build/three.min.js"></script>
 		<script src="js/loaders/OBJLoader.js"></script>
@@ -120,11 +120,11 @@
 
 			var mouseX = 0, mouseY = 0;
 
-          var canvasH = $('#model3d').height(),
-              canvasW = $('#model3d').width(),
-              windowHalfX = canvasW / 2,
-              windowHalfY = canvasH / 2;
-		
+					var canvasH = $('#model3d').height(),
+							canvasW = $('#model3d').width(),
+							windowHalfX = canvasW / 2,
+							windowHalfY = canvasH / 2;
+
 			var clock = new THREE.Clock();
 
 			//raycasting for selection init
@@ -420,31 +420,31 @@
 			var scaled = false;
 
 			var windowW = $(window).width(),
-                windowH = $(window).height();
+								windowH = $(window).height();
 
-            function onMouseDown(event){
-              event.preventDefault();
+						function onMouseDown(event){
+							event.preventDefault();
 
-              //mouseVector.x = 2* (event.clientX / windowW) - 1;
-              //mouseVector.y = 1 - 2 *(event.clientY / windowH);
-              mouseVector.x = ( (event.clientX - $(renderer.domElement).offset().left) / renderer.domElement.clientWidth ) * 2 - 1;
-              mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
+							//mouseVector.x = 2* (event.clientX / windowW) - 1;
+							//mouseVector.y = 1 - 2 *(event.clientY / windowH);
+							mouseVector.x = ( (event.clientX - $(renderer.domElement).offset().left) / renderer.domElement.clientWidth ) * 2 - 1;
+							mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
 
-              raycastered.setFromCamera(mouseVector.clone(),camera);
-              var intersects = raycastered.intersectObjects(scene.children,true);
-
-              if(intersects.length > 0 && intersects[0].object.name != 'floor'){
-                if(!scaled || pickedObject == undefined){
-                  intersects[0].object.scale.set(1.2,1.2,1.2);
-                  scaled = true;
-                  pickedObject = intersects[0].object;
-                } else {
-                  intersects[0].object.scale.set(1,1,1);
-                  scaled = false;
-                  pickedObject = null;
-                }
-              }
-            }
+							raycastered.setFromCamera(mouseVector.clone(),camera);
+							var intersects = raycastered.intersectObjects(scene.children,true);
+							var legsSelected = intersects[0].object.name.split("_")[1]  == 'nogi' ? true : false;
+							if(intersects.length > 0 && intersects[0].object.name != 'floor' && !legsSelected ){
+								if(!scaled || pickedObject == undefined){
+									intersects[0].object.scale.set(1.2,1.2,1.2);
+									scaled = true;
+									pickedObject = intersects[0].object;
+								} else {
+									intersects[0].object.scale.set(1,1,1);
+									scaled = false;
+									pickedObject = null;
+								}
+							}
+						}
 
 			window.requestAnimationFrame(render);
 		</script>

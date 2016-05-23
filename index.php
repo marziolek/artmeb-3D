@@ -156,7 +156,7 @@
 				/* / controls */
 
 				camera = new THREE.PerspectiveCamera( 45, canvasW / canvasH, 1, 2000 );
-				camera.position.z = 250;
+				camera.position.z = 100;
 				camera.position.y = 50;
 				controls = new THREE.OrbitControls( camera ,renderer.domElement);
 				controls.enablePan = false;
@@ -267,16 +267,6 @@
 
 				var material;
 				var loader = new THREE.ImageLoader( manager );
-//				loader.load( 'textures/nowe/1.jpg', function ( image ) {
-//
-//					texture.image = image;
-//					texture.color = 0x006600;
-//					texture.needsUpdate = true;
-//					texture.wrapS = THREE.RepeatWrapping;
-//					texture.wrapT = THREE.RepeatWrapping;
-//					texture.repeat.set( 15, 15 );
-//
-//				} );
 
 				var defaultMaterial = new THREE.MeshPhongMaterial({
 					shininess: 0.1,
@@ -312,29 +302,28 @@
 				}, onProgress, onError );
 
 				//ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR
-
-				var floor,floorMaterial,floorTexture,floorHeightMap;
-				floorTexture = new THREE.TextureLoader().load('textures/woodPlanks.jpg');
-				floorHeightMap = new THREE.TextureLoader().load('textures/woodPlanks-bumpMap.jpg');
-				floorTexture.wrapS = THREE.RepeatWrapping;
-				floorTexture.wrapT = THREE.RepeatWrapping;
-				floorHeightMap.wrapS = floorHeightMap.wrapT = THREE.RepeatWrapping;
-				floorHeightMap.repeat.set(4,4);
-				floorTexture.repeat.set(4,4);
-				floorMaterial = new THREE.MeshPhongMaterial({
-					map: floorTexture,
-					bumpMap: floorHeightMap,
-					bumpScale:0.5,
-					shininess: 0.1
-				});
-				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
-				floor.receiveShadow = true;
-				floor.material.side = THREE.DoubleSide;
-				floor.position.x = -20;
-				floor.position.y = -10;
-				floor.rotation.x = Math.PI/2;
-				floor.name = 'floor';
-				scene.add(floor);
+//				var floor,floorMaterial,floorTexture,floorHeightMap;
+//				floorTexture = new THREE.TextureLoader().load('textures/woodPlanks.jpg');
+//				floorHeightMap = new THREE.TextureLoader().load('textures/woodPlanks-bumpMap.jpg');
+//				floorTexture.wrapS = THREE.RepeatWrapping;
+//				floorTexture.wrapT = THREE.RepeatWrapping;
+//				floorHeightMap.wrapS = floorHeightMap.wrapT = THREE.RepeatWrapping;
+//				floorHeightMap.repeat.set(4,4);
+//				floorTexture.repeat.set(4,4);
+//				floorMaterial = new THREE.MeshPhongMaterial({
+//					map: floorTexture,
+//					bumpMap: floorHeightMap,
+//					bumpScale:0.5,
+//					shininess: 0.1
+//				});
+//				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
+//				floor.receiveShadow = true;
+//				floor.material.side = THREE.DoubleSide;
+//				floor.position.x = -20;
+//				floor.position.y = -10;
+//				floor.rotation.x = Math.PI/2;
+//				floor.name = 'floor';
+//				scene.add(floor);
 
 
 
@@ -443,9 +432,11 @@
 							mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
 
 							raycastered.setFromCamera(mouseVector.clone(),camera);
-							var intersects = raycastered.intersectObjects(scene.children,true);
-							var legsSelected = intersects[0].object.name.split("_")[1]  == 'nogi' ? true : false;
-							if(intersects.length > 0 && intersects[0].object.name != 'floor' && !legsSelected ){
+							var intersects = raycastered.intersectObjects(scene.children,true),
+									legsSelected = intersects[0] != undefined && intersects[0].object.name.split("_")[1]  == 'nogi' ? true : false;
+
+//							if(intersects.length > 0 && intersects[0].object.name != 'floor' && !legsSelected ){
+							if(intersects.length > 0 && !legsSelected ){
 								if(!scaled || pickedObject == undefined){
 									intersects[0].object.scale.set(1.2,1.2,1.2);
 									scaled = true;

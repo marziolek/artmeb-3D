@@ -267,15 +267,21 @@
 
 				var material;
 				var loader = new THREE.ImageLoader( manager );
-				loader.load( 'textures/nowe/1.jpg', function ( image ) {
+//				loader.load( 'textures/nowe/1.jpg', function ( image ) {
+//
+//					texture.image = image;
+//					texture.color = 0x006600;
+//					texture.needsUpdate = true;
+//					texture.wrapS = THREE.RepeatWrapping;
+//					texture.wrapT = THREE.RepeatWrapping;
+//					texture.repeat.set( 15, 15 );
+//
+//				} );
 
-					texture.image = image;
-					texture.needsUpdate = true;
-					texture.wrapS = THREE.RepeatWrapping;
-					texture.wrapT = THREE.RepeatWrapping;
-					texture.repeat.set( 15, 15 );
-
-				} );
+				var defaultMaterial = new THREE.MeshPhongMaterial({
+					shininess: 0.1,
+					color: 0x8f8f8f
+				});
 
 				changeMaterials(manager, loader, texture);
 
@@ -285,9 +291,8 @@
 
 				loader.load( 'obj/sofa2os.obj', function ( object ) {
 					object.traverse( function ( child ) {
-
 						if ( child instanceof THREE.Mesh ) {
-							child.material.map = texture;
+							child.material = defaultMaterial;
 						}
 					} );
 

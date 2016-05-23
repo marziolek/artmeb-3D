@@ -5,9 +5,9 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
-						html, body, #model3d {
-							height: 100%;
-						}
+			html, body, #model3d {
+				height: 100%;
+			}
 
 			body {
 				font-family: Monospace;
@@ -53,10 +53,10 @@
 				margin-right:130px;
 			}
 
-					/* shows that new onMouseDown works */
-					canvas {
-						height: 90% !important;
-					}
+			/* shows that new onMouseDown works */
+			canvas {
+				height: 90% !important;
+			}
 		</style>
 	</head>
 
@@ -104,7 +104,7 @@
 			</li>
 		</ul>
 
-				<div id="model3d" height="400px"></div>
+		<div id="model3d" height="400px"></div>
 
 		<script src="build/three.min.js"></script>
 		<script src="js/loaders/OBJLoader.js"></script>
@@ -120,10 +120,10 @@
 
 			var mouseX = 0, mouseY = 0;
 
-					var canvasH = $('#model3d').height(),
-							canvasW = $('#model3d').width(),
-							windowHalfX = canvasW / 2,
-							windowHalfY = canvasH / 2;
+			var canvasH = $('#model3d').height(),
+					canvasW = $('#model3d').width(),
+					windowHalfX = canvasW / 2,
+					windowHalfY = canvasH / 2;
 
 			var clock = new THREE.Clock();
 
@@ -195,7 +195,7 @@
 				spotLight.castShadow = true;
 				spotLight.shadow.mapSize.width = 2048;
 				spotLight.shadow.mapSize.height = 2048;
-				spotLight.intensity = 1;
+				spotLight.intensity = 0.8;
 				spotLight.shadow.camera.near = 650;
 				spotLight.shadow.camera.far = 1000;
 				spotLight.shadow.camera.fov = 30;
@@ -203,7 +203,7 @@
 				scene.add( spotLight );
 				var spotLightFill = new THREE.SpotLight( 0xFBE4FF );
 				spotLightFill.castShadow = true;
-				spotLightFill.intensity = 0.7;
+				spotLightFill.intensity = 0.4;
 				spotLightFill.shadow.mapSize.width = 2048;
 				spotLightFill.shadow.mapSize.height = 2048;
 				spotLightFill.shadow.camera.near = 650;
@@ -213,7 +213,7 @@
 				scene.add( spotLightFill );
 				var spotLightEdge = new THREE.SpotLight( 0xA4BDCC );
 				spotLightEdge.castShadow = true;
-				spotLightEdge.intensity = 0.8;
+				spotLightEdge.intensity = 0.5;
 				spotLightEdge.shadow.mapSize.width = 2048;
 				spotLightEdge.shadow.mapSize.height = 2048;
 				spotLightEdge.shadow.camera.near = 500;
@@ -269,7 +269,7 @@
 				var loader = new THREE.ImageLoader( manager );
 
 				var defaultMaterial = new THREE.MeshPhongMaterial({
-					shininess: 0.1,
+					shininess: 0,
 					color: 0x8f8f8f
 				});
 
@@ -302,28 +302,28 @@
 				}, onProgress, onError );
 
 				//ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR ADD FLOOR
-//				var floor,floorMaterial,floorTexture,floorHeightMap;
-//				floorTexture = new THREE.TextureLoader().load('textures/woodPlanks.jpg');
-//				floorHeightMap = new THREE.TextureLoader().load('textures/woodPlanks-bumpMap.jpg');
-//				floorTexture.wrapS = THREE.RepeatWrapping;
-//				floorTexture.wrapT = THREE.RepeatWrapping;
-//				floorHeightMap.wrapS = floorHeightMap.wrapT = THREE.RepeatWrapping;
-//				floorHeightMap.repeat.set(4,4);
-//				floorTexture.repeat.set(4,4);
-//				floorMaterial = new THREE.MeshPhongMaterial({
-//					map: floorTexture,
-//					bumpMap: floorHeightMap,
-//					bumpScale:0.5,
-//					shininess: 0.1
-//				});
-//				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
-//				floor.receiveShadow = true;
-//				floor.material.side = THREE.DoubleSide;
-//				floor.position.x = -20;
-//				floor.position.y = -10;
-//				floor.rotation.x = Math.PI/2;
-//				floor.name = 'floor';
-//				scene.add(floor);
+				//				var floor,floorMaterial,floorTexture,floorHeightMap;
+				//				floorTexture = new THREE.TextureLoader().load('textures/woodPlanks.jpg');
+				//				floorHeightMap = new THREE.TextureLoader().load('textures/woodPlanks-bumpMap.jpg');
+				//				floorTexture.wrapS = THREE.RepeatWrapping;
+				//				floorTexture.wrapT = THREE.RepeatWrapping;
+				//				floorHeightMap.wrapS = floorHeightMap.wrapT = THREE.RepeatWrapping;
+				//				floorHeightMap.repeat.set(4,4);
+				//				floorTexture.repeat.set(4,4);
+				//				floorMaterial = new THREE.MeshPhongMaterial({
+				//					map: floorTexture,
+				//					bumpMap: floorHeightMap,
+				//					bumpScale:0.5,
+				//					shininess: 0.1
+				//				});
+				//				floor = new THREE.Mesh(new THREE.PlaneGeometry(400,400),floorMaterial);
+				//				floor.receiveShadow = true;
+				//				floor.material.side = THREE.DoubleSide;
+				//				floor.position.x = -20;
+				//				floor.position.y = -10;
+				//				floor.rotation.x = Math.PI/2;
+				//				floor.name = 'floor';
+				//				scene.add(floor);
 
 
 
@@ -398,9 +398,13 @@
 						if(isFullObject){
 							for(var i=0; i<scene.children.length;i++){
 								var child = scene.children[i];
+
 								if(child.type == "Group"){
 									for(var j=0;child.children.length;j++){
-										child.children[j].material = newMaterial;
+										if(child.children[j].name.split("_")[1] != "nogi") {
+											console.log(child,'hill');
+											child.children[j].material = newMaterial;
+										}
 									}
 								}
 							}
@@ -421,33 +425,33 @@
 			var scaled = false;
 
 			var windowW = $(window).width(),
-								windowH = $(window).height();
+					windowH = $(window).height();
 
-						function onMouseDown(event){
-							event.preventDefault();
+			function onMouseDown(event){
+				event.preventDefault();
 
-							//mouseVector.x = 2* (event.clientX / windowW) - 1;
-							//mouseVector.y = 1 - 2 *(event.clientY / windowH);
-							mouseVector.x = ( (event.clientX - $(renderer.domElement).offset().left) / renderer.domElement.clientWidth ) * 2 - 1;
-							mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
+				//mouseVector.x = 2* (event.clientX / windowW) - 1;
+				//mouseVector.y = 1 - 2 *(event.clientY / windowH);
+				mouseVector.x = ( (event.clientX - $(renderer.domElement).offset().left) / renderer.domElement.clientWidth ) * 2 - 1;
+				mouseVector.y = - ( (event.clientY  - $(renderer.domElement).offset().top + $(window).scrollTop()) / renderer.domElement.clientHeight ) * 2 + 1;
 
-							raycastered.setFromCamera(mouseVector.clone(),camera);
-							var intersects = raycastered.intersectObjects(scene.children,true),
-									legsSelected = intersects[0] != undefined && intersects[0].object.name.split("_")[1]  == 'nogi' ? true : false;
+				raycastered.setFromCamera(mouseVector.clone(),camera);
+				var intersects = raycastered.intersectObjects(scene.children,true),
+						legsSelected = intersects[0] != undefined && intersects[0].object.name.split("_")[1]  == 'nogi' ? true : false;
 
-//							if(intersects.length > 0 && intersects[0].object.name != 'floor' && !legsSelected ){
-							if(intersects.length > 0 && !legsSelected ){
-								if(!scaled || pickedObject == undefined){
-									intersects[0].object.scale.set(1.2,1.2,1.2);
-									scaled = true;
-									pickedObject = intersects[0].object;
-								} else {
-									intersects[0].object.scale.set(1,1,1);
-									scaled = false;
-									pickedObject = null;
-								}
-							}
-						}
+				//							if(intersects.length > 0 && intersects[0].object.name != 'floor' && !legsSelected ){
+				if(intersects.length > 0 && !legsSelected ){
+					if(!scaled || pickedObject == undefined){
+						intersects[0].object.scale.set(1.2,1.2,1.2);
+						scaled = true;
+						pickedObject = intersects[0].object;
+					} else {
+						intersects[0].object.scale.set(1,1,1);
+						scaled = false;
+						pickedObject = null;
+					}
+				}
+			}
 
 			window.requestAnimationFrame(render);
 		</script>
